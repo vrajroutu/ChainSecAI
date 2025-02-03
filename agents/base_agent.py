@@ -126,3 +126,27 @@ class ChainSecAgent(ABC):
         result = self.agent_executor.run(task)
         tx_hash = self.log_transaction("Network", {"task": task, "result": result})
         return {"result": result, "tx_hash": tx_hash}
+    
+    def _update_reputation_metrics(self, task_result: dict):
+        """
+        Track performance metrics for reputation system
+        """
+        self.response_times.append(task_result['response_time'])
+        
+        if task_result['success']:
+            self.successful_tasks += 1
+        self.total_tasks += 1
+
+    def _calculate_validation_score(self, validation_report: dict) -> int:
+        """
+        Convert validation report to numerical score
+        """
+        base_score = 100
+        for error in validation_report.get('errors', []):
+            if 'crypto' in error.lower():
+                base_score -= 40
+            elif 'structure' in error.lower():
+                base_score -= 30
+            elif 'consensus' in error.lower():
+                base_score -= 20
+        return max(base_score, 0)

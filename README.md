@@ -19,7 +19,7 @@ This repository provides a foundation for building secure AI agent interactions 
 
 ## Architecture
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/roadmap.png)
 
 
 ## Setup
