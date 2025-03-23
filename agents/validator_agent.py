@@ -143,3 +143,19 @@ class ValidatorAgent(ChainSecAgent):
                 'errors': report['errors']
             }
         )
+    def validate_transaction(self, transaction: Dict) -> Dict:
+        report = super().validate_transaction(transaction)
+        
+        # Check reputation score
+        sender_rep = self.blockchain.get_agent_reputation(
+            transaction['sender_public_key']
+        )
+        
+        if sender_rep['score'] < 50:  # Threshold
+            report['warnings'].append("Low reputation agent - additional verification required")
+            report['valid'] = False
+            
+        elif sender_rep['score'] < 70:
+            report['warnings'].append("Medium reputation agent - limited privileges")
+            
+        return report
